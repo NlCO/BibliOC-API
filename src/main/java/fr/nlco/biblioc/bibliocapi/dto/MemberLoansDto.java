@@ -12,6 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class MemberLoansDto implements Serializable {
+    private Integer loanId;
     private String title;
     private String author;
     private String type;

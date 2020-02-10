@@ -5,9 +5,11 @@ import fr.nlco.biblioc.bibliocapi.controller.BookController;
 import fr.nlco.biblioc.bibliocapi.controller.LoanController;
 import fr.nlco.biblioc.bibliocapi.dto.BookStockDto;
 import fr.nlco.biblioc.bibliocapi.dto.MemberLoansDto;
+import fr.nlco.biblioc.bibliocapi.model.Loan;
 import fr.nlco.biblioc.bibliocapi.model.Member;
 import fr.nlco.biblioc.bibliocapi.repository.BookRepository;
 import fr.nlco.biblioc.bibliocapi.repository.CopyRepository;
+import fr.nlco.biblioc.bibliocapi.repository.LoanRepository;
 import fr.nlco.biblioc.bibliocapi.repository.MemberRepository;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -38,6 +40,8 @@ public class BibliocStepdefs {
     private MemberRepository _MemberRepository;
     @Autowired
     private LoanController _LoanController;
+    @Autowired
+    private LoanRepository _LoanRepository;
 
     private Integer bookNumber = 0;
     private Integer copyNumber = 0;
@@ -45,6 +49,10 @@ public class BibliocStepdefs {
 
     private Member member;
     private ResponseEntity<List<MemberLoansDto>> memberLoans;
+
+    private Loan loan;
+
+    private ResponseEntity<Loan> extendLoanResponse;
 
     @Given("a library with n copies of y books")
     public void aLibraryWithBooksFromYWorks() {
@@ -87,16 +95,19 @@ public class BibliocStepdefs {
 
     @Given("a loaned book which due date is not extended")
     public void aLoanedBookWhichDueDateIsNotExtended() {
-
+        loan = _LoanRepository.findById(1).orElseThrow(() -> new InvalidParameterException("Id d'emprunt invalid"));
+        Assert.assertFalse(loan.isExtendedLoan());
     }
 
     @When("the loan period is extended")
     public void theLoanPeriodIsExtended() {
-
+        extendLoanResponse = _LoanController.extendLoanPeriod(loan.getLoanId());
     }
 
     @Then("the book is flagged with the extend loaning period")
     public void theBookIsFlaggedWithTheExtendLoaningPeriod() {
-
+        Assert.assertEquals(ResponseEntity.ok().build().getStatusCode(), extendLoanResponse.getStatusCode());
+        loan = _LoanRepository.findById(1).orElseThrow(() -> new InvalidParameterException("Id d'emprunt invalid"));
+        Assert.assertTrue(loan.isExtendedLoan());
     }
 }

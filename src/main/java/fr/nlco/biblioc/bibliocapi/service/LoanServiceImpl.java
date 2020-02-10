@@ -2,6 +2,7 @@ package fr.nlco.biblioc.bibliocapi.service;
 
 import fr.nlco.biblioc.bibliocapi.dto.MemberLoansDto;
 import fr.nlco.biblioc.bibliocapi.mapper.MemberLoansMapper;
+import fr.nlco.biblioc.bibliocapi.model.Loan;
 import fr.nlco.biblioc.bibliocapi.model.Member;
 import fr.nlco.biblioc.bibliocapi.repository.LoanRepository;
 import fr.nlco.biblioc.bibliocapi.repository.MemberRepository;
@@ -9,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +43,19 @@ public class LoanServiceImpl implements LoanService {
         List<MemberLoansDto> memberLoansDto = mapper.loansToMemberLoansDtos(_LoanRepository.findLoansByMember(member));
         memberLoansDto.forEach(l -> l.setDueDate(ComputeDueDate(l.getLoanDate(), l.getExtendedLoan())));
         return memberLoansDto;
+    }
+
+    /**
+     * Methode permettant de mrolonger un prêt
+     *
+     * @param loanId Id du prêt à étendre
+     * @return le resultat de la mise à jour
+     */
+    @Override
+    public Loan extendLoanPeriod(Integer loanId) {
+        Loan loan = _LoanRepository.findById(loanId).orElseThrow(() -> new InvalidParameterException("Id d'emprunt invalid"));
+        loan.setExtendedLoan(true);
+        return _LoanRepository.save(loan);
     }
 
     /**
