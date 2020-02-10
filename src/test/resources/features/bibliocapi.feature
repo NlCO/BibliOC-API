@@ -6,8 +6,8 @@ Feature: BiblioOCapi
     Then a list of y books with their availability is returned
 
   Scenario: Get member's loaned books
-    Given a member with loaned books
-    When he consult his loaning
+    Given the member 2020020801 with loaned books
+    When he consult his loans
     Then a list of his loaned book is returned
 
   Scenario: Extend once the loaned period
