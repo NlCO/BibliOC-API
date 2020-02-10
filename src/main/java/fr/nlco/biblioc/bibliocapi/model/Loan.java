@@ -25,13 +25,10 @@ public class Loan {
     @OneToOne
     private Copy copy;
 
-    public Loan() {
-    }
+    @ManyToOne
+    private Member member;
 
-    public Loan(Date loanDate, boolean extendedLoan, Copy copy) {
-        this.loanDate = loanDate;
-        this.extendedLoan = extendedLoan;
-        this.copy = copy;
+    public Loan() {
     }
 
     @Override
@@ -40,7 +37,6 @@ public class Loan {
                 "loanId=" + loanId +
                 ", loanDate=" + loanDate +
                 ", extendedLoan=" + extendedLoan +
-                ", copy=" + copy +
                 '}';
     }
 }

@@ -2,9 +2,13 @@ package fr.nlco.biblioc.bibliocapi.stepdefs;
 
 import fr.nlco.biblioc.bibliocapi.BibliocapiApplication;
 import fr.nlco.biblioc.bibliocapi.controller.BookController;
+import fr.nlco.biblioc.bibliocapi.controller.LoanController;
 import fr.nlco.biblioc.bibliocapi.dto.BookStockDto;
+import fr.nlco.biblioc.bibliocapi.dto.MemberLoansDto;
+import fr.nlco.biblioc.bibliocapi.model.Member;
 import fr.nlco.biblioc.bibliocapi.repository.BookRepository;
 import fr.nlco.biblioc.bibliocapi.repository.CopyRepository;
+import fr.nlco.biblioc.bibliocapi.repository.MemberRepository;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -15,8 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -30,11 +34,17 @@ public class BibliocStepdefs {
     private CopyRepository _CopyRepository;
     @Autowired
     private BookController _BookController;
-
+    @Autowired
+    private MemberRepository _MemberRepository;
+    @Autowired
+    private LoanController _LoanController;
 
     private Integer bookNumber = 0;
     private Integer copyNumber = 0;
-    private ResponseEntity<List<BookStockDto>> response;
+    private ResponseEntity<List<BookStockDto>> booksStocks;
+
+    private Member member;
+    private ResponseEntity<List<MemberLoansDto>> memberLoans;
 
     @Given("a library with n copies of y books")
     public void aLibraryWithBooksFromYWorks() {
@@ -46,45 +56,47 @@ public class BibliocStepdefs {
 
     @When("I ask the list of books")
     public void iAskTheListOfBooks() {
-        response = _BookController.getBooksStock();
+        booksStocks = _BookController.getBooksStock();
     }
 
     @Then("a list of y books with their availability is returned")
     public void aListOfBooksWithTheirAvailabilityIsReturned() {
-        Assert.assertEquals(ResponseEntity.ok().build().getStatusCode(), response.getStatusCode());
-        Integer nbBookResult = response.getBody().size();
+        Assert.assertEquals(ResponseEntity.ok().build().getStatusCode(), booksStocks.getStatusCode());
+        Integer nbBookResult = booksStocks.getBody().size();
         Assert.assertEquals(bookNumber, nbBookResult);
-        Integer nbCopyResult = response.getBody().stream().mapToInt(BookStockDto::getNbCopy).sum();
+        Integer nbCopyResult = booksStocks.getBody().stream().mapToInt(BookStockDto::getNbCopy).sum();
         Assert.assertEquals(copyNumber, nbCopyResult);
     }
 
-    @Given("a member with loaned books")
-    public void aMemberWithLoanedBooks() {
-        throw new NotImplementedException();
+    @Given("the member {} with loaned books")
+    public void aMemberWithLoanedBooks(String memberNumber) {
+        member = _MemberRepository.findByMemberNumber(memberNumber).orElseThrow(() -> new InvalidParameterException("numéro de membre inexistant"));
+        Assert.assertTrue(member.getLoans().size() > 0);
     }
 
-    @When("he consult his loaning")
+    @When("he consult his loans")
     public void heConsultHisLoaning() {
-        throw new NotImplementedException();
+        memberLoans = _LoanController.getMemberLoans(member.getMemberNumber());
     }
 
     @Then("a list of his loaned book is returned")
     public void aListOfHisLoanedBookIsReturned() {
-        throw new NotImplementedException();
+        Assert.assertEquals(ResponseEntity.ok().build().getStatusCode(), memberLoans.getStatusCode());
+        Assert.assertEquals(member.getLoans().size(), memberLoans.getBody().size());
     }
 
     @Given("a loaned book which due date is not extended")
     public void aLoanedBookWhichDueDateIsNotExtended() {
-        throw new NotImplementedException();
+
     }
 
     @When("the loan period is extended")
     public void theLoanPeriodIsExtended() {
-        throw new NotImplementedException();
+
     }
 
     @Then("the book is flagged with the extend loaning period")
     public void theBookIsFlaggedWithTheExtendLoaningPeriod() {
-        throw new NotImplementedException();
+
     }
 }
