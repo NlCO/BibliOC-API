@@ -1,6 +1,7 @@
 package fr.nlco.biblioc.bibliocapi.service;
 
 import fr.nlco.biblioc.bibliocapi.dto.MemberLoansDto;
+import fr.nlco.biblioc.bibliocapi.model.Loan;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,4 +18,12 @@ public interface LoanService {
      * @return la liste des prêts de l'usager
      */
     List<MemberLoansDto> getMemberLoans(String memberNumber);
+
+    /**
+     * Methode permettant de mrolonger un prêt
+     *
+     * @param loanId Id du prêt à étendre
+     * @return le resultat de la mise à jour
+     */
+    Loan extendLoanPeriod(Integer loanId);
 }

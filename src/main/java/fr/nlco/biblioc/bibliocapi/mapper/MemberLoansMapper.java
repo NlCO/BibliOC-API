@@ -29,6 +29,7 @@ public interface MemberLoansMapper {
      * @return prêt formaté
      */
     @Mappings({
+            @Mapping(target = "loanId", expression = "java(loan.getLoanId())"),
             @Mapping(target = "title", expression = "java(loan.getCopy().getBook().getTitle())"),
             @Mapping(target = "author", expression = "java(loan.getCopy().getBook().getAuthor())"),
             @Mapping(target = "type", expression = "java(loan.getCopy().getBook().getType())"),
