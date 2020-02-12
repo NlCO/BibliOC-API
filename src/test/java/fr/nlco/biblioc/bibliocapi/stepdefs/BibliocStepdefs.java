@@ -4,6 +4,7 @@ import fr.nlco.biblioc.bibliocapi.BibliocapiApplication;
 import fr.nlco.biblioc.bibliocapi.controller.BookController;
 import fr.nlco.biblioc.bibliocapi.controller.LoanController;
 import fr.nlco.biblioc.bibliocapi.dto.BookStockDto;
+import fr.nlco.biblioc.bibliocapi.dto.MemberLateLoansDto;
 import fr.nlco.biblioc.bibliocapi.dto.MemberLoansDto;
 import fr.nlco.biblioc.bibliocapi.model.Loan;
 import fr.nlco.biblioc.bibliocapi.model.Member;
@@ -54,6 +55,8 @@ public class BibliocStepdefs {
 
     private ResponseEntity<Loan> extendLoanResponse;
 
+    private ResponseEntity<List<MemberLateLoansDto>> responseEntityMemberlateloans;
+
     @Given("a library with n copies of y books")
     public void aLibraryWithBooksFromYWorks() {
         copyNumber = _CopyRepository.findAll().size();
@@ -95,7 +98,7 @@ public class BibliocStepdefs {
 
     @Given("a loaned book which due date is not extended")
     public void aLoanedBookWhichDueDateIsNotExtended() {
-        loan = _LoanRepository.findById(1).orElseThrow(() -> new InvalidParameterException("Id d'emprunt invalid"));
+        loan = _LoanRepository.findById(2).orElseThrow(() -> new InvalidParameterException("Id d'emprunt invalid"));
         Assert.assertFalse(loan.isExtendedLoan());
     }
 
@@ -107,7 +110,24 @@ public class BibliocStepdefs {
     @Then("the book is flagged with the extend loaning period")
     public void theBookIsFlaggedWithTheExtendLoaningPeriod() {
         Assert.assertEquals(ResponseEntity.ok().build().getStatusCode(), extendLoanResponse.getStatusCode());
-        loan = _LoanRepository.findById(1).orElseThrow(() -> new InvalidParameterException("Id d'emprunt invalid"));
+        loan = _LoanRepository.findById(2).orElseThrow(() -> new InvalidParameterException("Id d'emprunt invalid"));
         Assert.assertTrue(loan.isExtendedLoan());
+    }
+
+    @Given("a list of {int} members in the database")
+    public void membersWhichHaveLateLoans(int members) {
+        List<Member> allMembers = _MemberRepository.findAll();
+        Assert.assertEquals(members, allMembers.size());
+    }
+
+    @When("the batch look for late loans of member")
+    public void theBatchLookForLateLoansOfMember() {
+        responseEntityMemberlateloans = _LoanController.getLateLoans();
+    }
+
+    @Then("a list of {int} member is return")
+    public void aListOfMemberIsReturn(int memberwithlateloan) {
+        Assert.assertEquals(ResponseEntity.ok().build().getStatusCode(), responseEntityMemberlateloans.getStatusCode());
+        Assert.assertEquals(memberwithlateloan, responseEntityMemberlateloans.getBody().size());
     }
 }
