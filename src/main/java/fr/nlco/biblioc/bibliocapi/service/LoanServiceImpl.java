@@ -1,7 +1,8 @@
 package fr.nlco.biblioc.bibliocapi.service;
 
+import fr.nlco.biblioc.bibliocapi.dto.MemberLateLoansDto;
 import fr.nlco.biblioc.bibliocapi.dto.MemberLoansDto;
-import fr.nlco.biblioc.bibliocapi.mapper.MemberLoansMapper;
+import fr.nlco.biblioc.bibliocapi.mapper.LoansMapper;
 import fr.nlco.biblioc.bibliocapi.model.Loan;
 import fr.nlco.biblioc.bibliocapi.model.Member;
 import fr.nlco.biblioc.bibliocapi.repository.LoanRepository;
@@ -11,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation de l'interface LoanService
@@ -23,7 +26,7 @@ public class LoanServiceImpl implements LoanService {
 
     private final LoanRepository _LoanRepository;
     private final MemberRepository _MemberRepository;
-    private MemberLoansMapper mapper = Mappers.getMapper(MemberLoansMapper.class);
+    private LoansMapper mapper = Mappers.getMapper(LoansMapper.class);
 
     @Autowired
     public LoanServiceImpl(LoanRepository loanRepository, MemberRepository memberRepository) {
@@ -40,9 +43,9 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public List<MemberLoansDto> getMemberLoans(String memberNumber) {
         Member member = _MemberRepository.findByMemberNumber(memberNumber).orElse(null);
-        List<MemberLoansDto> memberLoansDto = mapper.loansToMemberLoansDtos(_LoanRepository.findLoansByMember(member));
-        memberLoansDto.forEach(l -> l.setDueDate(ComputeDueDate(l.getLoanDate(), l.getExtendedLoan())));
-        return memberLoansDto;
+        List<MemberLoansDto> memberLoans = mapper.loansToMemberLoansDtos(_LoanRepository.findLoansByMember(member));
+        memberLoans.forEach(l -> l.setDueDate(ComputeDueDate(l.getLoanDate(), l.getExtendedLoan())));
+        return memberLoans;
     }
 
     /**
@@ -56,6 +59,26 @@ public class LoanServiceImpl implements LoanService {
         Loan loan = _LoanRepository.findById(loanId).orElseThrow(() -> new InvalidParameterException("Id d'emprunt invalid"));
         loan.setExtendedLoan(true);
         return _LoanRepository.save(loan);
+    }
+
+    /**
+     * Methode permttant de lister les prêts en retard
+     *
+     * @return liste des prêts en retard
+     */
+    @Override
+    public List<MemberLateLoansDto> getLateLoans() {
+        List<Member> members = _MemberRepository.findAll();
+        List<Member> membersWithLoans = members.stream().filter(m -> m.getLoans().size() > 0).collect(Collectors.toList());
+        Date today = new Date();
+        List<MemberLateLoansDto> lateLoans = new ArrayList<>();
+        for (Member m : membersWithLoans) {
+            List<MemberLoansDto> memberLateLoans = getMemberLoans(m.getMemberNumber());
+            memberLateLoans = memberLateLoans.stream().filter(l -> l.getDueDate().before(today)).collect(Collectors.toList());
+            if (memberLateLoans.size() > 0)
+                lateLoans.add(mapper.memberLateLoansToMemberLateLoansDto(m, memberLateLoans));
+        }
+        return lateLoans.stream().filter(m -> m.getLateLoanList().size() > 0).collect(Collectors.toList());
     }
 
     /**

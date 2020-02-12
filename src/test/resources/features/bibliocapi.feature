@@ -14,3 +14,8 @@ Feature: BiblioOCapi
     Given a loaned book which due date is not extended
     When the loan period is extended
     Then the book is flagged with the extend loaning period
+
+  Scenario: list member with their late loans
+    Given a list of 4 members in the database
+    When the batch look for late loans of member
+    Then a list of 2 member is return
