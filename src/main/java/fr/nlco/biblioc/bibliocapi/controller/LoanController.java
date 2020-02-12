@@ -1,5 +1,6 @@
 package fr.nlco.biblioc.bibliocapi.controller;
 
+import fr.nlco.biblioc.bibliocapi.dto.MemberLateLoansDto;
 import fr.nlco.biblioc.bibliocapi.dto.MemberLoansDto;
 import fr.nlco.biblioc.bibliocapi.model.Loan;
 import fr.nlco.biblioc.bibliocapi.service.LoanService;
@@ -49,5 +50,15 @@ public class LoanController {
         Loan updatedLoan = _LoanService.extendLoanPeriod(loanId);
         if (updatedLoan == null) return ResponseEntity.status(400).build();
         return ResponseEntity.ok(updatedLoan);
+    }
+
+    /**
+     * Endpoint permettant de récuperer la liste des livres en retard de retour de prêt
+     */
+    @GetMapping("/loan/late")
+    public ResponseEntity<List<MemberLateLoansDto>> getLateLoans() {
+        List<MemberLateLoansDto> lateLoans = _LoanService.getLateLoans();
+        if (lateLoans == null) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(lateLoans);
     }
 }
