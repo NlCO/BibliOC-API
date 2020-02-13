@@ -1,16 +1,16 @@
 package fr.nlco.biblioc.bibliocapi.controller;
 
+import fr.nlco.biblioc.bibliocapi.dto.LoanDto;
 import fr.nlco.biblioc.bibliocapi.dto.MemberLateLoansDto;
 import fr.nlco.biblioc.bibliocapi.dto.MemberLoansDto;
 import fr.nlco.biblioc.bibliocapi.model.Loan;
 import fr.nlco.biblioc.bibliocapi.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -60,5 +60,25 @@ public class LoanController {
         List<MemberLateLoansDto> lateLoans = _LoanService.getLateLoans();
         if (lateLoans == null) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(lateLoans);
+    }
+
+    /**
+     * Demande de prêt de livre
+     *
+     * @param loanToCreate Dto contenant l'id de l'exemplaire et le numero de membre
+     * @return le status de la demande
+     */
+    @PostMapping("/loan")
+    public ResponseEntity<Void> createLoan(@RequestBody LoanDto loanToCreate) {
+        Loan loan = _LoanService.createLoan(loanToCreate);
+        if (loan == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{memberNumber}")
+                .buildAndExpand(loanToCreate.getMemberNumber())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 }

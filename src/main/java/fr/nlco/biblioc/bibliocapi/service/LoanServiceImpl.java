@@ -1,10 +1,13 @@
 package fr.nlco.biblioc.bibliocapi.service;
 
+import fr.nlco.biblioc.bibliocapi.dto.LoanDto;
 import fr.nlco.biblioc.bibliocapi.dto.MemberLateLoansDto;
 import fr.nlco.biblioc.bibliocapi.dto.MemberLoansDto;
 import fr.nlco.biblioc.bibliocapi.mapper.LoansMapper;
+import fr.nlco.biblioc.bibliocapi.model.Copy;
 import fr.nlco.biblioc.bibliocapi.model.Loan;
 import fr.nlco.biblioc.bibliocapi.model.Member;
+import fr.nlco.biblioc.bibliocapi.repository.CopyRepository;
 import fr.nlco.biblioc.bibliocapi.repository.LoanRepository;
 import fr.nlco.biblioc.bibliocapi.repository.MemberRepository;
 import org.mapstruct.factory.Mappers;
@@ -22,12 +25,14 @@ public class LoanServiceImpl implements LoanService {
 
     private final LoanRepository _LoanRepository;
     private final MemberRepository _MemberRepository;
+    private final CopyRepository _CopyRepository;
     private LoansMapper mapper = Mappers.getMapper(LoansMapper.class);
 
     @Autowired
-    public LoanServiceImpl(LoanRepository loanRepository, MemberRepository memberRepository) {
+    public LoanServiceImpl(LoanRepository loanRepository, MemberRepository memberRepository, CopyRepository copyRepository) {
         this._LoanRepository = loanRepository;
         this._MemberRepository = memberRepository;
+        this._CopyRepository = copyRepository;
     }
 
     /**
@@ -79,6 +84,26 @@ public class LoanServiceImpl implements LoanService {
                 lateLoans.add(mapper.memberLateLoansToMemberLateLoansDto(m, memberLateLoans));
         }
         return lateLoans.stream().filter(m -> m.getLateLoanList().size() > 0).collect(Collectors.toList());
+    }
+
+    /**
+     * Methode pour créer un prêt
+     *
+     * @param loanToCreate prêt à valider
+     * @return le prêt si validé
+     */
+    @Override
+    public Loan createLoan(LoanDto loanToCreate) {
+        Copy copyChecked = _CopyRepository.findById(loanToCreate.getCopyId()).orElse(null);
+        Optional<Member> memberChecked = _MemberRepository.findByMemberNumber(loanToCreate.getMemberNumber());
+        if (copyChecked == null || !memberChecked.isPresent()) return null;
+        Optional<Loan> loanCheck = _LoanRepository.findByCopy(copyChecked);
+        if (loanCheck.isPresent()) return null;
+        Loan loan = new Loan();
+        loan.setCopy(copyChecked);
+        loan.setMember(memberChecked.get());
+        loan.setLoanDate(new Date());
+        return _LoanRepository.save(loan);
     }
 
     /**
