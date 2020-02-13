@@ -14,7 +14,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,9 +57,13 @@ public class LoanServiceImpl implements LoanService {
      */
     @Override
     public Loan extendLoanPeriod(Integer loanId) {
-        Loan loan = _LoanRepository.findById(loanId).orElseThrow(() -> new InvalidParameterException("Id d'emprunt invalid"));
-        loan.setExtendedLoan(true);
-        return _LoanRepository.save(loan);
+        Optional<Loan> loan = _LoanRepository.findById(loanId);
+        if (loan.isPresent()) {
+            loan.get().setExtendedLoan(true);
+        } else {
+            return null;
+        }
+        return _LoanRepository.save(loan.get());
     }
 
     /**
