@@ -45,11 +45,11 @@ public class LoanController {
      * @param loanId id du prêt
      * @return le prêt mis à jour encapsulé dans une ResponseEntity
      */
-    @PutMapping("/loan/{loanId}")
-    public ResponseEntity<Loan> extendLoanPeriod(@PathVariable Integer loanId) {
+    @PutMapping("/loan/{loanId}/extend")
+    public ResponseEntity<Loan> extendLoanPeriod(@PathVariable("loanId") Integer loanId) {
         Loan updatedLoan = _LoanService.extendLoanPeriod(loanId);
         if (updatedLoan == null) return ResponseEntity.status(400).build();
-        return ResponseEntity.ok(updatedLoan);
+        return ResponseEntity.ok().build();
     }
 
     /**
