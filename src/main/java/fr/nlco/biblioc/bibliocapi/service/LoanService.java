@@ -43,4 +43,11 @@ public interface LoanService {
      * @return le prêt si validé
      */
     Loan createLoan(LoanDto loanToCreate);
+
+    /**
+     * Methode pour suppprimer un prêt suite à retour
+     *
+     * @param loanId id du prêt
+     */
+    void returnLoan(Integer loanId);
 }

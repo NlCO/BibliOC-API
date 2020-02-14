@@ -81,4 +81,20 @@ public class LoanController {
                 .toUri();
         return ResponseEntity.created(location).build();
     }
+
+    /**
+     * Retour de prêt
+     *
+     * @param loanId id du prêt
+     * @return accepted
+     */
+    @DeleteMapping("/loan/{loanId}/return")
+    public ResponseEntity<Void> returnLoan(@PathVariable("loanId") Integer loanId) {
+        try {
+            _LoanService.returnLoan(loanId);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.accepted().build();
+    }
 }
