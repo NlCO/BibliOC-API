@@ -1,5 +1,6 @@
 package fr.nlco.biblioc.bibliocapi.service;
 
+import fr.nlco.biblioc.bibliocapi.dto.LoanDto;
 import fr.nlco.biblioc.bibliocapi.dto.MemberLateLoansDto;
 import fr.nlco.biblioc.bibliocapi.dto.MemberLoansDto;
 import fr.nlco.biblioc.bibliocapi.model.Loan;
@@ -34,4 +35,19 @@ public interface LoanService {
      * @return liste des prêts en retard
      */
     List<MemberLateLoansDto> getLateLoans();
+
+    /**
+     * Methode pour créer un prêt
+     *
+     * @param loanToCreate prêt à valider
+     * @return le prêt si validé
+     */
+    Loan createLoan(LoanDto loanToCreate);
+
+    /**
+     * Methode pour suppprimer un prêt suite à retour
+     *
+     * @param loanId id du prêt
+     */
+    void returnLoan(Integer loanId);
 }
