@@ -20,7 +20,7 @@ public class Copy implements Serializable {
     @ManyToOne
     private Book book;
 
-    @OneToOne(mappedBy = "copy", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "copy")
     private Loan loan;
 
     public Copy() {

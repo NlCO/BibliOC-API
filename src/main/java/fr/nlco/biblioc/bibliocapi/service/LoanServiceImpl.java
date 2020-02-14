@@ -107,6 +107,17 @@ public class LoanServiceImpl implements LoanService {
     }
 
     /**
+     * Methode pour suppprimer un prêt suite à retour
+     *
+     * @param loanId id du prêt
+     */
+    @Override
+    public void returnLoan(Integer loanId) {
+        Optional<Loan> loan = _LoanRepository.findById(loanId);
+        loan.ifPresent(_LoanRepository::delete);
+    }
+
+    /**
      * Methode permettant de calculer la date de retour d'un prêt en fonction de la date de prêt
      *
      * @param loanDate     date de prêt
