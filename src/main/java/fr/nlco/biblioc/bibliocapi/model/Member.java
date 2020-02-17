@@ -30,6 +30,9 @@ public class Member implements Serializable {
     @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
+    private String password;
+
     @OneToMany(mappedBy = "member")
     private List<Loan> loans;
 
