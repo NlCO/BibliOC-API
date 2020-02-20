@@ -21,15 +21,15 @@
 
 	<dependencies>
 		<!-- Begin of dependencies from Spring Initializr -->
-		<!-- Spring Web, Spring Data, Spring Data, H2, Lombok -->
+		<!-- Spring Web, Spring Data, Spring Data, H2, Postgresql, Lombok -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		<!-- dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -56,11 +56,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
-		</dependency -->
 		<!-- End of dependencies from Spring Initializr -->
 
 		<!-- Begin of Cucumber dependencies : for testing see https://cucumber.io/ -->
@@ -96,6 +91,20 @@
 			<version>${org.mapstruct.version}</version>
 		</dependency>
 		<!-- End of Mapstruct dependencies : for object mapping see https://mapstruct.org/ -->
+
+		<!-- Begin of Swagger dependencies : for API documentation -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+		<!-- End of Swagger dependencies : for API documentation -->
+
 	</dependencies>
 
 	<build>
