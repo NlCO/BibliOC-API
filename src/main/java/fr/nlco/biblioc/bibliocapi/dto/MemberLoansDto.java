@@ -19,19 +19,8 @@ public class MemberLoansDto implements Serializable {
     private Date loanDate;
     private Date dueDate;
     private Boolean extendedLoan;
+    private String library;
 
     public MemberLoansDto() {
-    }
-
-    @Override
-    public String toString() {
-        return "MemberLoansDto{" +
-                "title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", type='" + type + '\'' +
-                ", loanDate=" + loanDate +
-                ", dueDate=" + dueDate +
-                ", extendedLaon=" + extendedLoan +
-                '}';
     }
 }

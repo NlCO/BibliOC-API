@@ -4,7 +4,6 @@ import fr.nlco.biblioc.bibliocapi.dto.BookStockDto;
 import fr.nlco.biblioc.bibliocapi.mapper.BookStockMapper;
 import fr.nlco.biblioc.bibliocapi.model.Book;
 import fr.nlco.biblioc.bibliocapi.repository.BookRepository;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +15,13 @@ import java.util.List;
 @Service("BookService")
 public class BookServiceImpl implements BookService {
 
-    private BookStockMapper mapper = Mappers.getMapper(BookStockMapper.class);
-
     private final BookRepository _BookRepository;
+    private BookStockMapper mapper;
 
     @Autowired
-    public BookServiceImpl(BookRepository bookRepository) {
+    public BookServiceImpl(BookRepository bookRepository, BookStockMapper bookStockMapper) {
         _BookRepository = bookRepository;
+        mapper = bookStockMapper;
     }
 
     /**

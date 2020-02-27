@@ -27,7 +27,7 @@ Au choix :
   
         mvn clean spring-boot:run
     
-  * utilisation d'un webapp (**war**) dans un conteneur web (comme Tomcat) ou lancer via une commande java
+  * utilisation d'une webapp (**war**) dans un conteneur web (comme Tomcat) ou lancer via une commande java
     - création du package à la racine du projet 
      
             mvn clean package
@@ -38,4 +38,7 @@ Au choix :
 
 3.Accès
 
-L'application est accessible par http://localhost:8088/
+L'API est exposée via l'URL : http://localhost:8088/
+
+Une documentation swagger de l'API est disponible à l'adresse : http://localhost:8088/swagger-ui.html
+

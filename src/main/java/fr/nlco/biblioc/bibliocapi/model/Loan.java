@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-public class Loan {
+public class Loan implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer loanId;
@@ -29,14 +30,5 @@ public class Loan {
     private Member member;
 
     public Loan() {
-    }
-
-    @Override
-    public String toString() {
-        return "Loan{" +
-                "loanId=" + loanId +
-                ", loanDate=" + loanDate +
-                ", extendedLoan=" + extendedLoan +
-                '}';
     }
 }
