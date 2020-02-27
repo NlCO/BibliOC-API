@@ -38,15 +38,4 @@ public class Member implements Serializable {
 
     public Member() {
     }
-
-    @Override
-    public String toString() {
-        return "Member{" +
-                "memberId=" + memberId +
-                ", memberNumber='" + memberNumber + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
 }

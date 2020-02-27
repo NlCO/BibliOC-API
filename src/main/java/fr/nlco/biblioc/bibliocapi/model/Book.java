@@ -7,6 +7,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Classe représentant les ouvrages
@@ -30,26 +32,13 @@ public class Book implements Serializable {
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<Copy> copies = new ArrayList<>();
 
+    @Transient
+    private Map<String, Long> availabilityByLibrary;
+
     public Book() {
     }
 
-    public Book(String ISBN, String title, String author, String type, List<Copy> copies) {
-        this.isbn = ISBN;
-        this.title = title;
-        this.author = author;
-        this.type = type;
-        this.copies = copies;
-    }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "bookId=" + bookId +
-                ", isbn='" + isbn + '\'' +
-                ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", type='" + type + '\'' +
-                ", copies=" + copies +
-                '}';
+    public Map<String, Long> getAvailabilityByLibrary() {
+        return copies.stream().filter(c -> c.getLoan() == null).collect(Collectors.groupingBy(c -> c.getLocation().getLibName(), Collectors.counting()));
     }
 }

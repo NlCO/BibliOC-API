@@ -35,7 +35,8 @@ public interface LoansMapper {
             @Mapping(target = "title", expression = "java(loan.getCopy().getBook().getTitle())"),
             @Mapping(target = "author", expression = "java(loan.getCopy().getBook().getAuthor())"),
             @Mapping(target = "type", expression = "java(loan.getCopy().getBook().getType())"),
-            @Mapping(target = "dueDate", ignore = true)
+            @Mapping(target = "dueDate", ignore = true),
+            @Mapping(target = "library", expression = "java(loan.getCopy().getLocation().getLibName())")
     })
     MemberLoansDto loanToMemberLoanDto(Loan loan);
 
