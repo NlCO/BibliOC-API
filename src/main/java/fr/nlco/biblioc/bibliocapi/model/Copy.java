@@ -20,23 +20,12 @@ public class Copy implements Serializable {
     @ManyToOne
     private Book book;
 
+    @ManyToOne
+    private Library location;
+
     @OneToOne(mappedBy = "copy")
     private Loan loan;
 
     public Copy() {
-    }
-
-    public Copy(Book book, Loan loan) {
-        this.book = book;
-        this.loan = loan;
-    }
-
-    @Override
-    public String toString() {
-        return "Copy{" +
-                "copyId=" + copyId +
-                ", book=" + book +
-                ", loan=" + loan +
-                '}';
     }
 }

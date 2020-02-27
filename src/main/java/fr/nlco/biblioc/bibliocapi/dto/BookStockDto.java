@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Classe DTO décrivant la disponiblité d'un livre
@@ -16,26 +17,8 @@ public class BookStockDto implements Serializable {
     private String type;
     private Integer nbCopy;
     private Integer nbAvailable;
+    private Map<String, Long> availabilityByLibrary;
 
     public BookStockDto() {
-    }
-
-    public BookStockDto(String title, String author, String type, Integer nbCopy, Integer nbAvailable) {
-        this.title = title;
-        this.author = author;
-        this.type = type;
-        this.nbCopy = nbCopy;
-        this.nbAvailable = nbAvailable;
-    }
-
-    @Override
-    public String toString() {
-        return "BookStockDto{" +
-                "title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", type='" + type + '\'' +
-                ", nbCopy=" + nbCopy +
-                ", nbAvailable=" + nbAvailable +
-                '}';
     }
 }
